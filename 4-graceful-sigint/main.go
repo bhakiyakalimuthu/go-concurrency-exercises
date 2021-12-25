@@ -13,10 +13,49 @@
 
 package main
 
+import (
+	"os"
+	"os/signal"
+	"syscall"
+)
+
+//func main() {
+//	// Create a process
+//	proc := MockProcess{}
+//
+//	doneChan := make(chan os.Signal, 1)
+//	signal.Notify(doneChan, syscall.SIGINT, syscall.SIGTERM)
+//
+//	go func() {
+//
+//		for {
+//			select {
+//			case <-doneChan:
+//				fmt.Println("context done is called")
+//				proc.Stop()
+//			default:
+//				fmt.Println("running default")
+//			}
+//		}
+//	}()
+//	// Run the process (blocking)
+//	proc.Run()
+//}
+
 func main() {
-	// Create a process
 	proc := MockProcess{}
 
-	// Run the process (blocking)
+	donech := make(chan os.Signal, 1)
+	signal.Notify(donech, syscall.SIGINT)
+	go func() {
+		count := 0
+		for _ = range donech {
+			if count == 0 {
+				count++
+				proc.Stop()
+			}
+			os.Exit(1)
+		}
+	}()
 	proc.Run()
 }

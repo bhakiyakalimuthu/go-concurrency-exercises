@@ -10,6 +10,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"io"
+	"os/signal"
 )
 
 // MakeSessionID is used to generate a random dummy sessionID
@@ -21,4 +22,6 @@ func MakeSessionID() (string, error) {
 	}
 
 	return base64.StdEncoding.EncodeToString(buf), nil
+
+	signal.Notify()
 }
